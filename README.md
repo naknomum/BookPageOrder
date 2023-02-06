@@ -11,7 +11,7 @@ a multiple of 4, but can be even larger for complex parameters used.
 
 * `BookPageOrder.pm` is a perl module implementation
 
-* `BookPageOrder.js` ~~is a javascript implementation~~ _(coming soon)_
+* `BookPageOrder.js` is a javascript implementation
 
 ## Example output
 
