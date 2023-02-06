@@ -54,3 +54,8 @@ Operation examples are listed below.
 * `book_order_util.pl -t` will output a test pdf which illustrates layout: `book_order_util.pl -d 16 4 4 > test.pdf`
 
 ![example test pdf](test-example.png)
+
+
+## Technical information on ordering, assembly, etc.
+
+More [details on page ordering conventions](details.md) is available, along with other details.
