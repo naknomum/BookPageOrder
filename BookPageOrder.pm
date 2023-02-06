@@ -84,7 +84,6 @@ sub order {
                     } else {
                         $ind = $y * $pilesAcross + $x;
                     }
-                    #my @ord = ($stack[$ind]->[$side * 2], $stack[$ind]->[$side * 2 + 1]);
                     my @ord = ($stack[$shind[$ind]]->[$side * 2], $stack[$shind[$ind]]->[$side * 2 + 1]);
                     warn "  side=$side $y,$x ind=[$ind] (shind=$shind[$ind]) (@{$stack[$shind[$ind]]}) ==> @ord\n" if $debug;
                     push(@order, @ord);
@@ -105,6 +104,7 @@ sub order {
         cardIndices => \@cardIndices,
         signatureSize => $signatureSize,
         signatureSizes => \@signatureSizes,
+        version => $VERSION,
     };
     return $res;
 }
