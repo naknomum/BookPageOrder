@@ -49,7 +49,7 @@ Operation examples are listed below.
 
 * `book_order_util.pl` with _no flag_ will simply output the order array (one number per line): `book_order_util.pl 16 > ordering.dat`
 
-* `book_order_util.pl -d` will output the whole data strucure (as above) as json: `book_order_util.pl -d 16 2 1 > ordering.json`
+* `book_order_util.pl -d` will output the whole data structure (as above) as json: `book_order_util.pl -d 15 2 1 > ordering.json`
 
 * `book_order_util.pl -t` will output a test pdf which illustrates layout: `book_order_util.pl -d 16 4 4 > test.pdf`
 
