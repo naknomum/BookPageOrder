@@ -10,24 +10,27 @@ use Digest::CRC qw(crc32);
 
 getopts('itds:');
 
-# see https://metacpan.org/pod/PDF::API2::Page for page sizes
-#   e.g. 'A4' or '11x8.5'
-my $pdfPageSize = $opt_s || 'letter';
-
-my $pdf = PDF::API2->new();
-my @dt = localtime;
-$pdf->producer('BookPageOrder v' . $BookPageOrder::VERSION);
-my $pdfdate = sprintf('D:%04d%02d%02d%02d%02d', 1900 + $dt[5], $dt[4] + 1, $dt[3], $dt[2], $dt[1], $dt[0]);
-$pdf->created($pdfdate);
-$pdf->modified($pdfdate);
-
 my $data = BookPageOrder::order(@ARGV);
 
-if ($opt_t) {
-    &test_pdf($data);
+if ($opt_t || $opt_i) {
+    # see https://metacpan.org/pod/PDF::API2::Page for page sizes
+    #   e.g. 'A4' or '11x8.5'
+    my $pdfPageSize = $opt_s || 'letter';
 
-} elsif ($opt_i) {
-    &instructions_pdf($data);
+    my $pdf = PDF::API2->new();
+    my @dt = localtime;
+    $pdf->producer('BookPageOrder v' . $BookPageOrder::VERSION);
+    $pdf->creator(to_json($data));
+    my $pdfdate = sprintf('D:%04d%02d%02d%02d%02d', 1900 + $dt[5], $dt[4] + 1, $dt[3], $dt[2], $dt[1], $dt[0]);
+    $pdf->created($pdfdate);
+    $pdf->modified($pdfdate);
+
+    if ($opt_t) {
+        &test_pdf($pdf, $data, $pdfPageSize);
+    } else {
+        &instructions_pdf($pdf, $data, $pdfPageSize);
+    }
+
 
 } elsif ($opt_d) {
     print to_json($data, {pretty=>1});
@@ -39,13 +42,13 @@ if ($opt_t) {
 
 
 sub instructions_pdf {
-    my $data = shift;
+    my ($pdf, $data, $pdfPageSize) = @_;
     #$pdf->save('/dev/stdout');
     warn "NOT YET IMPLEMENTED\n";  #TODO
 }
 
 sub test_pdf {
-    my $data = shift;
+    my ($pdf, $data, $pdfPageSize) = @_;
     my $usesSignatures = scalar(@{$data->{signatureSizes}}) > 1;
 
     my $ctx = Digest::CRC->new(type=>'crc32');
@@ -53,6 +56,7 @@ sub test_pdf {
     my $hash = $ctx->hexdigest;
     $pdf->title("BookPageOrder Test Page $hash");
     $pdf->subject($hash);
+    my @dt = localtime;
     my $timestamp = sprintf('%04d-%02d-%02dT%02d:%02d:%02d', 1900 + $dt[5], $dt[4] + 1, $dt[3], $dt[2], $dt[1], $dt[0]);
 
     for (my $pg = 0 ; $pg < $data->{numSheets} * 2 ; $pg++) {
