@@ -167,7 +167,7 @@ sub test_pdf {
                 # back cover
                 if ($data->{order}->[$i] == $data->{numPagesActual} - 1) {
                     my $image = $pdf->image('qrcode.png');
-                    my $dim = 70 * $fontScale;
+                    my $dim = 50 * $fontScale;
                     $gfx->object($image, $origx + 10, $origy + $subh - 1.2 * $dim, $dim, $dim);
                     $txt->font($fontBold, $fsize);
                     $txt->translate($origx + 3, $origy + $fsize * 5);
@@ -199,6 +199,53 @@ sub test_pdf {
                 $txt->font($fontBold, $fsize);
                 $txt->text($data->{$s}, (align=>'left'));
                 $y -= $fsize * 1.3;
+            }
+
+            # rulers to measure unprintable margin (for safeMargin)
+            $txt->font($font, 6);
+            my $tickSize = 10;  # really half of it
+            $gfx->line_width(1);
+            $gfx->stroke_color('#000000');
+            for (my $i = 0 ; $i < 7 ; $i++) {
+                $gfx->move(5 + $i * 5, $ph / 2 + $tickSize);
+                $gfx->vline($ph / 2 - $tickSize);
+                $gfx->move($pw - (5 + $i * 5), $ph / 2 + $tickSize);
+                $gfx->vline($ph / 2 - $tickSize);
+                $gfx->move(0, $ph / 2);
+                $gfx->hline(35);
+                $gfx->move($pw / 2, 0);
+                $gfx->vline(35);
+
+                $gfx->move($pw / 2 + $tickSize, 5 + $i * 5);
+                $gfx->hline($pw / 2 - $tickSize);
+                $gfx->move($pw / 2 + $tickSize, $ph - (5 + $i * 5));
+                $gfx->hline($pw / 2 - $tickSize);
+                $gfx->move($pw, $ph / 2);
+                $gfx->hline($pw - 35);
+                $gfx->stroke();
+                $gfx->close();
+                $gfx->move($pw / 2, $ph);
+                $gfx->vline($ph - 35);
+
+                if ($i % 2) {
+                    $txt->translate(5 + $i * 5, $ph / 2 + 12);
+                    $txt->text(5 + $i * 5, (align=>'center'));
+                    $txt->translate($pw - (5 + $i * 5), $ph / 2 + 12);
+                    $txt->text(5 + $i * 5, (align=>'center'));
+                    $txt->translate($pw / 2 - 12, 3 + $i * 5);
+                    $txt->text(5 + $i * 5, (align=>'right'));
+                    $txt->translate($pw / 2 - 12, $ph - (7 + $i * 5));
+                    $txt->text(5 + $i * 5, (align=>'right'));
+                } else {
+                    $txt->translate(5 + $i * 5, $ph / 2 - 16);
+                    $txt->text(5 + $i * 5, (align=>'center'));
+                    $txt->translate($pw - (5 + $i * 5), $ph / 2 - 16);
+                    $txt->text(5 + $i * 5, (align=>'center'));
+                    $txt->translate($pw / 2 + 12, 3 + $i * 5);
+                    $txt->text(5 + $i * 5, (align=>'left'));
+                    $txt->translate($pw / 2 + 12, $ph - (7 + $i * 5));
+                    $txt->text(5 + $i * 5, (align=>'left'));
+                }
             }
         }
 
