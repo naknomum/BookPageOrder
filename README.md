@@ -51,7 +51,7 @@ Operation examples are listed below.
 
 * `book_order_util.pl -d` will output the whole data structure (as above) as json: `book_order_util.pl -d 15 2 1 > ordering.json`
 
-* `book_order_util.pl -t` will output a test pdf which illustrates layout: `book_order_util.pl -d 16 4 4 > test.pdf`
+* `book_order_util.pl -t` will output a test pdf which illustrates layout: `book_order_util.pl -t 30 4 4 5 > test.pdf`
 
 ![example test pdf](test-example.png)
 
