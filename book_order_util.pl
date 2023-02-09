@@ -43,8 +43,86 @@ if ($opt_t || $opt_i) {
 
 sub instructions_pdf {
     my ($pdf, $data, $pdfPageSize) = @_;
-    #$pdf->save('/dev/stdout');
-    warn "NOT YET IMPLEMENTED\n";  #TODO
+    my $usesSignatures = scalar(@{$data->{signatureSizes}}) > 1;
+
+    my $page = $pdf->page();
+    $page->size($pdfPageSize);
+    my $txt = $page->text();
+    my $gfx = $page->graphics();
+    my $font = $pdf->font('Helvetica');
+    my $fontBold = $pdf->font('Helvetica-Bold');
+
+    my $source = PDF::API2->open('scissors.pdf');
+    my $scissors = $pdf->embed_page($source, 1);
+    $source = PDF::API2->open('fold.pdf');
+    my $fold = $pdf->embed_page($source, 1);
+
+
+    my @bounds = $page->size();
+    my $pw = $bounds[2] - $bounds[0];
+    my $ph = $bounds[3] - $bounds[1];
+    my $subw = $pw / $data->{numAcross};
+    my $subh = $ph / $data->{numDown};
+    my $fontScale = $subw / 150;
+
+    # cut lines
+    my $x = $subw * 2;
+    $gfx->line_width(1);
+    $gfx->stroke_color('#AAAAAA');
+    $gfx->line_dash_pattern(10);
+    for (my $i = 0 ; $i < $data->{numAcross} / 2 - 1 ; $i++) {
+        $gfx->move($x, 0);
+        $gfx->vline($ph);
+        $gfx->stroke();
+        $gfx->save;
+        $gfx->transform(-translate=>[$x + 13,10], -rotate=>90);
+        $gfx->object($scissors, 0, 0, 0.7, 0.7);
+        $gfx->restore;
+        $x += $subw * 2;
+    }
+    my $y = $subh;
+    for (my $i = 0 ; $i < $data->{numDown} - 1 ; $i++) {
+        $gfx->move(0, $y);
+        $gfx->hline($pw);
+        $gfx->stroke();
+        $gfx->object($scissors, 10, $y - 13, 0.7, 0.7);
+        $y += $subh;
+    }
+
+    # fold lines
+    $gfx->line_width(0.6);
+    $gfx->stroke_color('#DDDDDD');
+    $gfx->line_dash_pattern();
+    $x = $subw;
+    for (my $i = 0 ; $i < $data->{numAcross} - 1 ; $i++) {
+        $gfx->move($x, 0);
+        $gfx->vline($ph);
+        $gfx->stroke();
+        $gfx->object($fold, $x - 23, $ph - 30, 0.2, 0.2);
+        $x += $subw * 2;
+    }
+
+    my $tileLetter = 'A';
+    my $lastTileLetter;
+    for (my $y = 0 ; $y < $data->{numDown} ; $y++) {
+        for (my $x = 0 ; $x < $data->{numAcross} ; $x++) {
+            my $i = $y * $data->{numAcross} + $x + $pg * $data->{perSheet} / 2;
+            my $origx = $x * $subw;
+            my $origy = $ph - ($y + 1) * $subh;
+
+            my $fsize = 70 * $fontScale;
+            $txt->font($fontBold, $fsize);
+            $txt->fill_color('#CCCCCC');
+            if ($x % 2 == 0) {
+                $txt->translate($origx + $subw, $origy + $subh * 0.4);
+                $txt->text($tileLetter, (align=>'center'));
+                $lastTileLetter = $tileLetter;
+                $tileLetter++;
+            }
+        }
+    }
+
+    $pdf->save('/dev/stdout');
 }
 
 sub test_pdf {
