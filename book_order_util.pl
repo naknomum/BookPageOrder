@@ -125,10 +125,10 @@ sub test_pdf {
                 $txt->text($data->{order}->[$i], (align=>'center'));
 
                 # header
-                my $fsize = 9 * $fontScale;
+                my $fsize = 8 * $fontScale;
                 $txt->font($font, $fsize);
                 $txt->fill_color('#AAAAAA');
-                $txt->translate($origx + 3, $origy + $subh - $fsize * 1.2);
+                $txt->translate($origx + 13, $origy + $subh - $fsize * 1.8);
                 $txt->text($hash . ' - ' . $timestamp);
 
                 # footer
@@ -140,7 +140,7 @@ sub test_pdf {
                     $sigStart = ($sigPg == 0);
                 }
                 $txt->fill_color('#777777');
-                $txt->translate($origx + 3, $origy + 6);
+                $txt->translate($origx + 13, $origy + 16);
                 $txt->text($footer);
 
                 # denote start of signature
@@ -167,13 +167,13 @@ sub test_pdf {
                 # back cover
                 if ($data->{order}->[$i] == $data->{numPagesActual} - 1) {
                     my $image = $pdf->image('qrcode.png');
-                    my $dim = 50 * $fontScale;
-                    $gfx->object($image, $origx + 10, $origy + $subh - 1.2 * $dim, $dim, $dim);
+                    my $dim = 40 * $fontScale;
+                    $gfx->object($image, $origx + 10, $origy + $subh - 1.5 * $dim, $dim, $dim);
                     $txt->font($fontBold, $fsize);
-                    $txt->translate($origx + 3, $origy + $fsize * 5);
+                    $txt->translate($origx + 13, $origy + $fsize * 5);
                     $txt->text('BookPageOrder v' . $BookPageOrder::VERSION);
                     $txt->font($font, $fsize * 0.8);
-                    $txt->translate($origx + 3, $origy + $fsize * 4);
+                    $txt->translate($origx + 13, $origy + $fsize * 4);
                     $txt->text('github.com/naknomum/BookPageOrder');
                 }
             }
