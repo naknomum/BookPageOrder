@@ -8,7 +8,7 @@ use Getopt::Std;
 use Data::Dumper;
 use Digest::CRC qw(crc32);
 
-getopts('itds:');
+getopts('itc1ds:');
 
 my $data = BookPageOrder::order(@ARGV);
 
@@ -36,7 +36,17 @@ if ($opt_t || $opt_i) {
     print to_json($data, {pretty=>1});
 
 } else {
-    print join("\n", @{$data->{order}}) . "\n";
+    my @ord = @{$data->{order}};
+    if ($opt_1) {
+        foreach (@ord) {
+            $_++;
+        }
+    }
+    if ($opt_c) {
+        print join(", ", @ord) . "\n";
+    } else {
+        print join("\n", @ord) . "\n";
+    }
 }
 
 
