@@ -49,6 +49,8 @@ Operation examples are listed below.
 
 * `book_order_util.pl` with _no flag_ will simply output the order array (one number per line): `book_order_util.pl 16 > ordering.dat`
 
+* The above order array can be modified with these flags: `-c` for comma-delimited rather than one-per-line; `-1` for 1-indexed (default 0-indexed)
+
 * `book_order_util.pl -d` will output the whole data structure (as above) as json: `book_order_util.pl -d 15 2 1 > ordering.json`
 
 * `book_order_util.pl -t` will output a test pdf which illustrates layout: `book_order_util.pl -t 30 4 4 5 > test.pdf`
